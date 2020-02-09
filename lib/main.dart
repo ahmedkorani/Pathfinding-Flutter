@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'Visualizer.dart';
+import 'package:pathfinding_flutter/Visualizer.dart';
 
 void main() => runApp(MyApp());
 

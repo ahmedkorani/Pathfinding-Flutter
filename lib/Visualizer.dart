@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:pathfinding_flutter/Constants.dart';
 import 'package:pathfinding_flutter/CustomRenderWidget.dart';
+import 'package:pathfinding_flutter/Position.dart';
 
 import 'Node.dart';
 
@@ -19,13 +20,18 @@ class _VisualizerState extends State<Visualizer> {
 
   @override
   void initState() {
-    iMazeLength = 20;
+    iMazeLength = 30;
     jMazeLength = iMazeLength * iMazeLength;
-    mazeMatrix = new List.generate(iMazeLength, (_) => List(jMazeLength));
 
-    for (int i = 0; i < iMazeLength; i++)
+    //Maze initialization using generate function
+    mazeMatrix = new List.generate(iMazeLength, (int i) {
+      List<Node> newList = new List<Node>();
+
       for (int j = 0; j < jMazeLength; j++)
-        mazeMatrix[i][j] = new Node(color: notSelectedTileColor);
+        newList.add(new Node(notSelectedTileColor, Position(i, j)));
+
+      return newList;
+    });
 
     super.initState();
   }
@@ -71,12 +77,6 @@ class _VisualizerState extends State<Visualizer> {
               mazeMatrix[x][y].color = selectedTileColor;
             });
           }
-          //To delete tiles
-//          else if (mazeMatrix[x][y].color == selectedTileColor){
-//            setState(() {
-//              mazeMatrix[x][y].color = notSelectedTileColor;
-//            });
-//          }
         }
       }
     }
@@ -106,7 +106,7 @@ class _VisualizerState extends State<Visualizer> {
           physics: NeverScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: iMazeLength,
-            childAspectRatio: 100 / 145,
+            childAspectRatio: 100 / 148,
             crossAxisSpacing: 1,
             mainAxisSpacing: 1,
           ),
@@ -114,8 +114,8 @@ class _VisualizerState extends State<Visualizer> {
             int x, y = 0;
             x = (index / iMazeLength).floor();
             y = (index % iMazeLength);
-            mazeMatrix[x][y].x = x;
-            mazeMatrix[x][y].y = y;
+            mazeMatrix[x][y].position.x = x;
+            mazeMatrix[x][y].position.y = y;
             return CustomRenderWidget(
               index: index,
               child: GestureDetector(
@@ -123,12 +123,12 @@ class _VisualizerState extends State<Visualizer> {
                   setState(() {
                     if (!Node.isStartNodePicked)
                       mazeMatrix[x][y].setStartNode();
-                    else if(!Node.isEndNodePicked)
+                    else if (!Node.isEndNodePicked)
                       mazeMatrix[x][y].setEndNode();
                   });
                 },
                 child: AnimatedContainer(
-                  curve: Curves.ease,//TODO Change the animation
+                  curve: Curves.ease, //TODO Change the animation
                   duration: Duration(milliseconds: 500),
                   color: mazeMatrix[x][y].color,
                 ),
